@@ -15,8 +15,14 @@ class UsauarioController{
             const { index } = req.params;
             resp.json(dbUser[index]);
         })
-        
 
+       // Visualizar um usuário 
+        app.post('/usuario/:email', (req, resp) => {
+            const buscarEmail = dbUser.filter((elemento) => elemento.email === req.params.email)
+            resp.send(buscarEmail)
+            
+        })
+        
         // Adicionando usuário
         app.post('/usuario' , (req, resp) => {
           const { nome, sobrenome, email, senha } = req.body
