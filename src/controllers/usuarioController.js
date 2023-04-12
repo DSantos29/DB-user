@@ -33,24 +33,40 @@ class UsauarioController{
         })
 
         // Atualizar dados de um usuário 
-        app.put('/usuario/:index', (req, resp) => {
-        const { index } = req.params;
-        const { nome, sobrenome, email, senha } = req.body;
+        app.put('/usuario/:email', (req, resp) => {
+        let index ;
+         
+        const [ usuario ] = dbUser.filter((usuario, i) => {
+            if(usuario.email === req.params.email){
+                index = i
+            }
+            return usuario.email === req.params.email
+        })
 
-        dbUser[index].nome = nome
-        dbUser[index].sobrenome = sobrenome
-        dbUser[index].email = email
-        dbUser[index].senha = senha
+        const { nome, sobrenome, email, senha } = req.body;
+        
+        dbUser[index].nome = nome !== true ? dbUser[index].nome : nome
+        dbUser[index].sobrenome = sobrenome !== true ? dbUser[index].sobrenome : sobrenome
+        dbUser[index].email =  email !== true ? dbUser[index].email : email
+        dbUser[index].senha = senha !== true ? dbUser[index].senha : senha
+       
         console.log( nome, sobrenome, email, senha )
         resp.json(dbUser)
+
         })
         
         // Excluir um usuário
         app.delete('/usuario/:index', (req, resp) => {
-            const { index } = req.params;
-
+            let index ;
+            const [usuario] = dbUser.filter((usuario, i) => {
+                if(usuario.email === req.params.email){
+                    index = i
+                }
+                return usuario.email === req.params.email
+            })
+            
             dbUser.splice(index, 1)
-            resp.json({ message: 'Usuário deletado com sucesso'})
+            resp.json(dbUser)
         })
     
     }
