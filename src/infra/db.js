@@ -1,8 +1,7 @@
-import Usuario from "../model/usuario.js";
+import  sqlite3  from "sqlite3";
 
-const dbUser = []
 
-const usuario = new Usuario ("Danilo", "Santos", "useremail@gmail.com", "1234" )
-dbUser.push(usuario)
+sqlite3.verbose()
+const db = new sqlite3.Database("./database.db")
 
-export { dbUser }
+export default db

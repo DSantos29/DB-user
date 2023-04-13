@@ -1,76 +1,63 @@
-import Usuario from "../model/usuario.js";
-import { dbUser } from "../infra/db.js";
+// Importa o bd.js para poder usar o banco de dados simulado
+import { bdUsuarios } from "../bd.js"
+import UsuarioDAO from "../DAO/UsuarioDAO.js"
 
-class UsauarioController{
+class usuarioController {
+    static rotas(app){
+        // Rota para o recurso usuario
+        app.get('/usuario', usuarioController.listar)
+        app.post('/usuario', usuarioController.inserir)
+        app.post("/usuario/:email", usuarioController.filtrarPorEmail)
+        app.delete("/usuario/:email", usuarioController.apagarUsuario)
+        app.put("/usuario/:email", usuarioController.atualizarUsuario)
+    }
 
-    static getUsauarioController( app ) {
+    static listar(req, res){
+        const resultado = UsuarioDAO.listar()
+        res.send(resultado)
+  
+    }
 
-        // Visualizar todos os usuários
-        app.get('/usuario', (req, resp) =>
-        resp.json(dbUser)
-        );
+    static inserir(req, res){
+        res.send('Rota ativada com POST e recurso usuario: usuario deve ser inserido')
+        // Console log do corpo da requisição
+        console.log(req.body)        
+    }
 
-        // Visualizar um usuário 
-        app.get('/usuario/:index', (req, resp) => {
-            const { index } = req.params;
-            resp.json(dbUser[index]);
-        })
+    static filtrarPorEmail(req, res){
+        const [usuario] = bdUsuarios.filter((usuario) => usuario.email === req.params.email)
+        res.send(usuario)
+        console.log(usuario)
+    }
 
-       // Visualizar um usuário 
-        app.post('/usuario/:email', (req, resp) => {
-            const buscarEmail = dbUser.filter((elemento) => elemento.email === req.params.email)
-            resp.send(buscarEmail)
-            
-        })
-        
-        // Adicionando usuário
-        app.post('/usuario' , (req, resp) => {
-          const { nome, sobrenome, email, senha } = req.body
-          const usuarioAInserir = new Usuario ( nome, sobrenome, email, senha )
-          dbUser.push(usuarioAInserir)
-          console.log( nome, sobrenome, email, senha )
-          resp.json(dbUser)
-        })
-
-        // Atualizar dados de um usuário 
-        app.put('/usuario/:email', (req, resp) => {
-        let index ;
-         
-        const [ usuario ] = dbUser.filter((usuario, i) => {
+    static apagarUsuario(req, res){
+        let index;
+        const [usuario] = bdUsuarios.filter((usuario, i) => {
             if(usuario.email === req.params.email){
-                index = i
+                index = i;
             }
-            return usuario.email === req.params.email
+           return  usuario.email === req.params.email
+        })
+        bdUsuarios.splice(index, 1)
+        console.log(usuario)
+        res.send(`usuario: ${usuario.nome}, index: ${index}`)
+    }
+
+    static atualizarUsuario(req, res) {
+        let index;
+        const [usuario] = bdUsuarios.filter((usuario, i) => {
+            if(usuario.email === req.params.email){
+                index = i;
+            }
+           return  usuario.email === req.params.email
         })
 
-        const { nome, sobrenome, email, senha } = req.body;
-        
-        dbUser[index].nome = nome !== true ? dbUser[index].nome : nome
-        dbUser[index].sobrenome = sobrenome !== true ? dbUser[index].sobrenome : sobrenome
-        dbUser[index].email =  email !== true ? dbUser[index].email : email
-        dbUser[index].senha = senha !== true ? dbUser[index].senha : senha
-       
-        console.log( nome, sobrenome, email, senha )
-        resp.json(dbUser)
-
-        })
-        
-        // Excluir um usuário
-        app.delete('/usuario/:index', (req, resp) => {
-            let index ;
-            const [usuario] = dbUser.filter((usuario, i) => {
-                if(usuario.email === req.params.email){
-                    index = i
-                }
-                return usuario.email === req.params.email
-            })
-            
-            dbUser.splice(index, 1)
-            resp.json(dbUser)
-        })
+        bdUsuarios[index].nome = req.body.nome;
+        bdUsuarios[index].email = req.body.email;
+        bdUsuarios[index].senha = req.body.senha;
     
+        res.send("Usuario alterado com sucesso")
     }
 }
 
-
-export default UsauarioController;
+export default usuarioController
