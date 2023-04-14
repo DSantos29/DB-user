@@ -1,5 +1,5 @@
-import Usuario from './models/usuario.js'
-import Tarefa from './models/tarefa.js'
+import Usuario from './models/Usuario.js'
+import Tarefa from './models/Tarefa.js'
 
 // Cria vários objetos e os adiciona a um array para simular uma lista de objetos
 const bdUsuarios = []
