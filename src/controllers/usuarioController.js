@@ -12,8 +12,8 @@ class usuarioController {
         app.put("/usuario/:email", usuarioController.atualizarUsuario)
     }
 
-    static listar(req, res){
-        const resultado = UsuarioDAO.listar()
+    static async listar(req, res){
+        const resultado = await UsuarioDAO.listar()
         res.send(resultado)
   
     }
